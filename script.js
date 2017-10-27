@@ -52,7 +52,7 @@ var dredgeDeckList = {
 "lifeFromLoam": new Card ("Life from the Loam","1G","Dredger","Dredge 3"),
 "mountain": new Card ("Mountain","","Land","R"),
 "fetchland": new Card ("Fetchland","","Land","R G B"),
-"stompingGround": new Card ("Stomping Ground","","Land","R G")
+"copperlineGorge": new Card ("Copperline Gorge","","Land","R G")
 }
 
 
@@ -64,7 +64,7 @@ this.cardpile.push(card)
 
 Deck.prototype.mulliganDecision = function () {
 
-    if (this.lands.length > 2 && this.drawspells.length > 1) {return "Keep"}
+    if (this.lands.length > 1 && this.drawspells.length > 0 || this.lands.length === 1 && this.openinghand.includes("faithlessLooting")) {return "Keep"}
     else {return "Mull"}
 
 }
@@ -86,16 +86,17 @@ this.shuffle()
 
 
 function Game(deck) {
-  let num = 7; let mullcount = 0; 
-  this.graveyard = []
-  this.landsInPlay = []
+  let num = 7; let mullcount = 0;
+  this.mulls = [];
+  this.graveyard = [];
+  this.landsInPlay = [];
   this.deck = deck;
 
   // Resolve Mulligans
   while (num>4) {
   deck.deal()
   deck.organize(num)
-  if (deck.mulliganDecision() === "Mull") mullcount++, num-- ;
+  if (deck.mulliganDecision() === "Mull") mullcount++, this.mulls.push(deck.openinghand), num-- ;
   else break 
   }
 
@@ -103,33 +104,23 @@ function Game(deck) {
 
 Game.prototype.turnOne = function () {
 
+var that = this
 
-
-for (var i=0;i<this.deck.openinghand.length-1;i++)
-console.log(this.deck.openinghand[i])
-{
-  if (this.deck.openinghand[i].type === 'Land') {
-    this.landsInPlay.push(this.deck.openinghand[i]);
-    this.deck.openinghand = this.deck.openinghand.splice(i,1);
-
+this.deck.openinghand.every (function (x,i) {
+    if (x.type === 'Land') {
+      
+      that.landsInPlay.push(that.deck.openinghand[i]);
+      that.deck.openinghand.splice(i,1);
+      return;
+    }
+    return true
   }
-
+  )
 }
-
-
-
-
-
-
-
-
-
-
-}
-
-
 
 eetai = new Deck()
 var thegame = new Game(eetai)
 thegame.turnOne() 
+console.log(thegame.deck.openinghand)
 console.log(thegame.landsInPlay)
+console.log(thegame.mulls)
