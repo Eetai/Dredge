@@ -118,9 +118,20 @@ this.deck.openinghand.every (function (x,i) {
   )
 }
 
+
+
+
+
+
 eetai = new Deck()
 var thegame = new Game(eetai)
 thegame.turnOne() 
+
 console.log(thegame.deck.openinghand)
 console.log(thegame.landsInPlay)
 console.log(thegame.mulls)
+
+
+$( "#newgame" ).click(function() {
+  alert("hi")
+});
